@@ -1,0 +1,149 @@
+body { background: #4c5154; color: #FFF; }
+
+/* Anchor */
+a, a.visited, a.active { color: #1582cf; }
+a:hover { color: #0c4c79; }
+
+/* Background */
+.bg { background: #F0FBFF; }
+
+/* Boxes Messages */
+.grn { background: #f0fbdf; color: #609500; }
+.ylw { background: #fffde8; color: #8c8512; }
+.red { background: #ffe3d7; color: #eb4739; }
+.blu { background: #ecf9ff; color: #0888c3; }
+.crm { background: #f9f8f0; }
+.sky { background: #ebfcff; }
+
+/* Buttons */
+.btn { border: none; background: none; }
+a.butt { background: url("../img/bg-butt.gif") 0% 0% repeat-x; border: 1px solid #DDD; color: #777; display: block; text-shadow: 1px 1px 0 #FFF; }
+a.butt:hover { background-position: 0% 100%; border: 1px solid #333; color: #FFF; text-shadow: -1px -1px 0 #000; }
+a.butt.black { background: url("../img/bg-butt.gif") 0% 100% repeat-x; border: 1px solid #333; color: #FFF; display: block; text-shadow: -1px -1px 0 #000; }
+a.butt.black:hover { background-position: 0% 0%; border: 1px solid #DDD; color: #777; text-shadow: -1px -1px 0 #FFF; }
+a.tool { background: url("../img/bg-butt.gif") 0% 100% repeat-x; border: 1px solid #333; color: #FFF; display: block; text-shadow: -1px -1px 0 #000; }
+a.tool:hover { background-position: 0% 0%; border: 1px solid #DDD; color: #777; text-shadow: -1px -1px 0 #FFF; }
+input.btn { background: url("../img/bg-butt.gif") 0% 100% repeat-x; border: 1px solid #333; color: #FFF; display: block; text-shadow: 1px 1px 0 #000; }
+input.btn:hover { background-position: 0% 0%; border: 1px solid #DDD; color: #777; text-shadow: -1px -1px 0 #FFF; }
+
+/* Colors */
+.grey { color: #999; }
+
+/* Container */
+#container h1 { background: #181818; }
+#container { background: #FFF; color: #555; }
+.white { background: #FFF; }
+.white.sort { background: url("../img/icon-sort.gif") #FFF no-repeat left center; }
+.white.sortr { background: url("../img/icon-sort.gif") #FFF no-repeat bottom right; }
+
+/* Footer */
+#footer a { color: #ccc; }
+#footer a:hover { color: #fff; }
+
+/* Forms */
+label { background: #EFEFEF; color: #2a2a2a; }
+.white label { background: none; }
+.text, .select, .textarea, .select-category { border: 1px solid #CCC; background: #FFF; }
+.text:focus, .textarea:focus, .select-category:focus, .select:focus { border: 1px solid #777; }
+.select-category option { background: #F0EEE8; }
+.field-err { border-color: #E3302C; }
+.form-type.add { background: #fbffec; padding: 10px 0; }
+.form-type.add label { background: #fbffec; }
+
+/* Header */
+#header { background: #181818; color: #FFF; }
+#header a, a.visited, a.active { color: #FFF; }
+#header #session { color: #FFF; }
+
+/* Heading */
+h1 { color: #FFF; text-shadow: -1px -1px 0 #000; }
+h2 { color: #0070cf; }
+h3 { color: #999; }
+h5 { background: #2a2a2a; color: #FFF; }
+.blu h2 { color: #0888c3; }
+
+/* Items */
+.item, .item-parent { border-top: 1px dotted #ccc; }
+.sort { background: url("../img/icon-sort.gif") no-repeat left center; }
+.sort-parent { background: url("../img/icon-sort.gif") no-repeat left top; }
+.col { color: #555; }
+.item-title { background: #eee; color: #555; }
+.item-title .col { color: #555; }
+.icon-trash:hover { background: #ffa9a9; }
+
+/* Magic Box */
+.magic-box { border: 1px solid #ccc; }
+.magic-box .group { background: #ccc; color: #555; display: block; }
+.magic-box .subgroup { background: #EEE; color: #000; }
+
+/* Messages */
+.error { background: #ff246c; color: #FFF; }
+.success { background: #a7ca05; color: #FFF; }
+.warning { background: #ff8a00; color: #FFF; }
+
+/* Misc */
+hr { border: none; border-top: 1px solid #ccc; height: 1px; margin: 5px 0; }
+a.more { background: #444; color: #FFF; }
+a.more:hover { background: #1582cf; color: #FFF; }
+
+/* Navigation */
+#menu { background: #181818; text-shadow:1px 1px 0 #000; }
+#menu li { background: #2c2c2c; }
+#menu li:hover { background: #868a8c; }
+#menu li ul { background: #868a8c; }
+#menu li ul li { background: none; }
+#menu li ul li a:hover { color: #000; text-shadow: none; }
+#menu li.first {  }
+#menu a, a.visited, a.active { color: #FFF; }
+#menu a:hover { color: #000; text-shadow: none; }
+
+/* Pages */
+
+.pages { float: right; font-size: 11px; padding: 10px 15px; }
+
+/* Section */
+.title { background: #EFEFEF; }
+.section { background: #EFEFEF; }
+
+/* Table */
+.border { border: 1px solid #DDD; }
+.border.table { border-top: none; }
+.table { background: #FFF; }
+.table th { background: #EEE; color: #555; }
+.table.zebra th { color: #555; }
+.table th a { color: inherit; border-bottom: 1px dotted #CCC; }
+.table th a:hover { color: #4B3825; }
+.table td { }
+.table .odd, .odd { background-color: #f4fbff; }
+.hover { background-color: #000; }
+.break { border-bottom: 1px solid #CCC; }
+.total { background: #f5ffe0; color: #486900; }
+
+/* Table Toolbar */
+.toolbar { color: #2e707f; border: 1px solid #bddee6; }
+.toolbar li { border-right: 1px solid #bddee6; }
+.toolbar h3 { color: #14404a; }
+
+/* UI Overwrite */
+.bar { background: #FFF; }
+
+.ui-widget-content { border: none; background: #EFEFEF; color: inherit; }
+.ui-widget-content a { color: #1582cf; }
+.ui-widget-contenta:hover { color: #0c4c79; }
+.ui-widget-header { border: none; background: none; color: #ffffff; }
+
+.ui-menu .ui-menu-item { border-bottom: 1px solid #ccc; }
+
+.ui-tabs .ui-tabs-nav li a { color: #555; }
+
+.ui-tab.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: none; }
+.ui-tab.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: none; }
+.ui-tab.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: #CCC; border: none; }
+.ui-tab.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { background: #EFEFEF; border: none; }
+
+.ui-datepicker { background: #000; }
+.ui-datepicker .ui-widget-content { background: #FFF; }
+.ui-datepicker a.ui-state-default { color: #1582cf; }
+.ui-datepicker .ui-state-default, .ui-datepicker .ui-widget-content .ui-state-default, .ui-datepicker .ui-widget-header .ui-state-default { background: #FFF; text-align: center; }
+.ui-datepicker-calendar th { background: #222; }
+.ui-datepicker-calendar .ui-datepicker-week-end { background: #444; }

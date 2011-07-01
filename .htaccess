@@ -1,0 +1,12 @@
+RewriteEngine	On
+
+#messageboard
+RewriteRule ^community/[a-zA-Z_]+-\d+/[a-zA-Z_]+-\d+/[a-zA-Z_]+-(\d+)\-(\d+)\.html$	index.php?_controller=Community&_action=viewThread&threadId=$1&pageNumb=$2 [L]
+RewriteRule ^community/[a-zA-Z_]+-\d+/[a-zA-Z_]+-(\d+)\-(\d+)\.html$	index.php?_controller=Community&_action=viewCategory&categoryId=$1&pageNumb=$2 [L]
+RewriteRule ^community/[a-zA-Z_]+-\d+/[a-zA-Z_]+-(\d+)\/newpost.html$	index.php?_controller=Community&_action=newPost&categoryId=$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^admin/([\w]+)/([\w]+)$ bento.php?_controller=$1&_action=$2&%{QUERY_STRING} [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)$ index.php?_urlrequest=$1&request=%{REQUEST_FILENAME}&%{QUERY_STRING} [L]
