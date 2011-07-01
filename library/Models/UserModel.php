@@ -136,9 +136,9 @@ class UserModel extends Model {
 			$emailUsedBy = $this->emailUsed($data['email']);
 			$data['id'] = !empty($data['id'])?intval($data['id']):0;
 			
-			if($emailUsedBy !== $data['id']) {
+			if($emailUsedBy != false && $emailUsedBy != $data['id']) {
 				
-				$this->errorMsg = 'Email already in use.';
+				$this->errorMsg = 'Email already in use. '.$emailUsedBy.' - '.$data['id'];
 				return false;
 				
 			}
