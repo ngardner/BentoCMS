@@ -62,9 +62,11 @@ class Dispatcher {
 		
 		try {
 			
-			if(class_exists($this->controller)) {
+			$className = ucfirst(strtolower($this->controller));
+			
+			if(class_exists($className)) {
 				
-				$objController = new $this->controller;
+				$objController = new $className;
 				
 			} else {
 				
@@ -85,7 +87,7 @@ class Dispatcher {
 			} else {
 				
 				//bubble up
-				throw new Exception('Class '.$this->controller.' does not extend Controller class!');
+				throw new Exception('Class '.$className.' does not extend Controller class!');
 				
 			}
 			
