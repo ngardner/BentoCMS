@@ -132,6 +132,7 @@ class PagesModel extends Model {
 		
 		$resultsTemp = $this->db->getAll($sql);
 		
+		// the magic tree code
 		if(!empty($resultsTemp)) {
 			
 			foreach($resultsTemp as $result) {
