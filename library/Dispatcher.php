@@ -47,7 +47,39 @@ class Dispatcher {
 	
 	function setParams($params) {
 		
-		$this->params = $params;
+		$cleanParams = array();
+		
+		// backend controllers are used by trused and authenticated users, allow HTML to be posted
+		if($this->directory != 'backend') {
+			
+			foreach($params as $key=>$value) {
+				
+				## IF HTML SHOULD BE ALLOWED TO BE POSTED, WHITELIST IT HERE ##
+				$whitelistKeys = array(
+					'uploads'
+				);
+				
+				if(!in_array($key,$whitelistKeys)) {
+					
+					if(is_string($value)) {
+						
+						$value = htmlspecialchars($value);
+						
+					}
+					
+				}
+				
+				$cleanParams[$key] = $value;
+				
+			}
+			
+		} else {
+			
+			$cleanParams = $params;
+			
+		}
+		
+		$this->params = $cleanParams;
 		
 	}
 	
