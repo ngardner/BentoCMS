@@ -2,3 +2,5 @@ cache/*
 frontend/views/compiled/*
 backend/views/compiled/*
 bento/uploads/*
+
+backups/.DS_Store
