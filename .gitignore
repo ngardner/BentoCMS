@@ -1,0 +1,4 @@
+cache/*
+frontend/views/compiled/*
+backend/views/compiled/*
+bento/uploads/*
