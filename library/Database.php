@@ -24,7 +24,7 @@ class Database {
 		
 	}
 	
-	function getInstance() {
+	static function getInstance() {
 		
 		if (!isset(self::$instance)) {
 			

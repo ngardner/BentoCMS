@@ -12,11 +12,16 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 /**
  * Defining constants
  */
-define('DIR',$_SERVER['DOCUMENT_ROOT'].'/');
 define('PRODUCT_NAME','New BentoCMS Install');
-define('URL','example.com');
 define('ERROR_EMAIL','you@example.com');
 define('SESSION_NAME', 'example_');
+define('DIR',$_SERVER['DOCUMENT_ROOT'].'/');
+define('URL',$_SERVER['HTTP_HOST']);
+
+/**
+ * Localization
+ */
+date_default_timezone_set('America/Chicago');
 
 /**
  * setup params var
