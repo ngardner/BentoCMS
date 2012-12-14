@@ -199,6 +199,8 @@ class UserModel extends Model {
 	
 	function forgotPassword($email) {
 		
+		$updated = false;
+		
 		$sql = "
 		SELECT
 			*

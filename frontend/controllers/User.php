@@ -211,7 +211,18 @@ class User extends Controller {
 		$objTemplate = new TemplatesModel;
 		
 		$layoutInfo = $objLayout->loadLayout();
-		$template = $objTemplate->loadTemplateFromKeyname('user-forgotpassword');
+		
+		//$template = $objTemplate->loadTemplateFromKeyname('user-forgotpassword');
+		$template = array(
+			'left_sidebad'=>'',
+			'right_sidebar'=>'',
+			'content'=>'
+				<form method="post" action="/user/forgotpassword">
+				<input type="hidden" name="resetpassword" value="1"/>
+				<label>Email:</label><input type="text" name="email">
+				</form>
+			'
+		);
 		
 		if(!empty($params['resetpassword']) && !empty($params['email'])) {
 			
