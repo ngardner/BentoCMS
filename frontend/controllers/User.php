@@ -129,6 +129,15 @@ class User extends Controller {
 	
 	function saveUser($data) {
 		
+		// dont trust posted user_id
+		if(!empty($data['user_id'])) {
+			if($data['user_id'] != $this->objAuthentication->user_id) {
+				// editing someone elses profile
+				$this->errorMsg = 'Unauthorized';
+				return false;
+			}
+		}
+		
 		$user_id = false;
 		$this->errorMsg = null;
 		
