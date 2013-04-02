@@ -11,6 +11,8 @@
  *  Nathan Gardner <nathan@factory8.com>
  *  September 15th, 2010
  *
+ *  Updated: April 1st, 2013 - added multiformat support, and transparent PNGs
+ *
  *  ----------------
  *
  *  Usage:
@@ -27,15 +29,15 @@
  *  <img src="/image.php?f=images/myimage.jpg&w=180&h=135&effect=crop"/>
  *
  *  Limitations:
- *  Although the input file can be jpg, gif, or png - the output file
- *  will always be a jpg, so you cannot have transparencies or animations
+ *  The outputted file will be the same format/extension, however Animated GIFs are not supported.
+ *  PNGs now support transparency.
  *
  */
 
 // SETTINGS
 ini_set('display_errors',0);
 $cacheDir = $_SERVER['DOCUMENT_ROOT'].'/cache/';
-$imageQuality = 95; // 0 (bad quality, small file) to 100 (high quality, big file)
+$imageQuality = 95; // 0 (bad quality, small file) to 100 (high quality, big file) - applies to JPEGS only
 
 ##############################################################################
 ##############################################################################
@@ -63,7 +65,19 @@ $effect = !empty($_GET['effect'])?$_GET['effect']:'bestfit';
 // PROCESS
 if(file_exists($orignalImage) && is_file($orignalImage)) {
   
-  $cacheFile = md5($orignalImage.$maxWidth.$maxHeight.$effect).'.jpg';
+  $imageInfo = getimagesize($orignalImage);
+  $orignalType = intval($imageInfo[2]);
+  
+  switch($orignalType) {
+    
+    case 1: $imageType = 'gif'; break;
+    case 2: $imageType = 'jpg'; break;
+    case 3: $imageType = 'png'; break;
+    default: $imageType = 'jpg'; break;
+    
+  }
+  
+  $cacheFile = md5($orignalImage.$maxWidth.$maxHeight.$effect).'.'.$imageType;
   
   // if width and height arent set, effect gets set to bestfit
   if(empty($maxWidth) || empty($maxHeight)) {
@@ -75,10 +89,8 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
   // see if we have a cached version, and that the orignal image has not been updated
   if(!file_exists($cacheDir.$cacheFile) || filemtime($orignalImage) > filemtime($cacheDir.$cacheFile)) {
     
-    $imageInfo = getimagesize($orignalImage);
     $orignalWidth = intval($imageInfo[0]);
     $orignalHeight = intval($imageInfo[1]);
-    $orignalType = intval($imageInfo[2]);
     $orignalRatio = $orignalWidth/$orignalHeight;
     
     // determine output width and height
@@ -137,11 +149,11 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
     $newRatio = $width/$height;
     
     // load in the orignal image
-    switch($orignalType) {
+    switch($imageType) {
       
-      case 1: $loadedImage = imagecreatefromgif($orignalImage); break;
-      case 2: $loadedImage = imagecreatefromjpeg($orignalImage); break;
-      case 3: $loadedImage = imagecreatefrompng($orignalImage); break;
+      case 'gif': $loadedImage = imagecreatefromgif($orignalImage); break;
+      case 'jpg': $loadedImage = imagecreatefromjpeg($orignalImage); break;
+      case 'png': $loadedImage = imagecreatefrompng($orignalImage); break;
       
     }
     
@@ -149,6 +161,11 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
       
       // create new image
       $newImage = imagecreatetruecolor($width,$height);
+      
+      if($imageType == 'png') {
+        $trans_layer_overlay = imagecolorallocatealpha($newImage, 220, 220, 220, 127); // force transparency
+        imagefill($newImage, 0, 0, $trans_layer_overlay); // force transparency
+      }
       
       // put orignal image in new image
       switch($effect) {
@@ -183,7 +200,16 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
       }
       
       // save to cache folder
-      imagejpeg($newImage,$cacheDir.$cacheFile,$imageQuality);
+      switch($imageType) {
+        case 'gif': imagegif($newImage,$cacheDir.$cacheFile); break;
+        case 'jpg': imagejpeg($newImage,$cacheDir.$cacheFile,$imageQuality); break;
+        case 'png':
+          imagealphablending($newImage, false); // force transparency
+          imagesavealpha($newImage, true); // force transparency
+          imagepng($newImage,$cacheDir.$cacheFile,9);
+        break;
+      }
+      
       
       // display it
       outputImage($cacheDir.$cacheFile);
@@ -244,7 +270,26 @@ function outputError($width,$height,$errorMsg) {
 
 function outputImage($fileName) {
   
-  header('Content-type: image/jpeg');
+  $imageInfo = getimagesize($fileName);
+  $orignalType = intval($imageInfo[2]);
+  
+  switch($orignalType) {
+    
+    case 'gif';
+      header('Content-type: image/gif');
+    break;
+    case 'jpg';
+      header('Content-type: image/jpeg');
+    break;
+    case 'png';
+      header('Content-type: image/png');
+    break;
+    default:
+      header('Content-type: image/jpeg');
+    break;
+    
+  }
+  
   header('Content-Disposition: attachment; filename='.$fileName);
   echo file_get_contents($fileName);
   exit();

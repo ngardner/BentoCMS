@@ -26,6 +26,13 @@ class LayoutModel extends Model {
 		
 	}
 	
+	function loadLayoutByTitle($title='') {
+		
+		$id = $this->db->getOne("SELECT `id` FROM `layouts` WHERE `title` = '".$this->db->makeSafe($title)."'");
+		return $this->loadLayout($id);
+		
+	}
+	
 	function getLayouts() {
 		
 		$sql = "
