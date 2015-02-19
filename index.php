@@ -30,7 +30,8 @@ try {
 	$objEmail->setSubject('FATAL ERROR | Database connection problem on '.URL);
 	$objEmail->setBody('Database connection problem!!' . $objDatabase->getError());
 	//$objEmail->sendMail();
-	die('Unable to connect to database.');
+	//die('Unable to connect to database.');
+	Dispatcher::error404('Database connection down');
 	
 }
 

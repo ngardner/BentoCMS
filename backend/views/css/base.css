@@ -49,6 +49,7 @@ label { font-size: 12px; font-weight: bold; padding: 4px 10px; text-transform: u
 .select { width: 885px; padding: 7px; font-size: 1em; position: relative; z-index: 100 !important; }
 
 .textarea { width: 870px; height: 400px; padding: 7px; font-family: "Helvetica", Lucida Grande,  Arial, sans-serif; font-size: 14px; word-wrap: break-word; }
+.textarea.thin { height: 80px; }
 .textarea.sml { width: 350px; }
 .textarea.lrg { height: 150px; width: 470px; }
 .textarea.code { font-family: monospace; font-size: 14px; resize: vertical; }
@@ -124,7 +125,7 @@ div.magic-box { float: right; height: 388px; overflow-y: scroll; overflow-x: hid
 #menu li:hover { cursor: default; }
 
 #menu ul li ul { position: absolute; top: 30px; left: 0px; width: 250px; }
-#menu ul li ul li { display: block; width: 150px; }
+#menu ul li ul li { display: block; width: 200px; }
 
 #menu a, a.visited, a.active { position: relative; }
 #menu a:hover { text-decoration: none; }
@@ -140,7 +141,7 @@ ol li { list-style: decimal; }
 .right { float: right; }
 .clear { clear: both; }
 .small { font-size: 12px; font-style: italic; font-weight: normal; text-transform: none; }
-.wrap { width: 960px; position: relative; }
+.wrap { width: 960px; position: relative; margin: 0 auto; }
 .spacer { padding: 5px; }
 .uploads li { float: left; width: 350px; padding: 5px; }
 .more { display: block; float: right; font-size: 10px; font-weight: bold; padding: 1px 10px; position: absolute; right: 0px; top: 9px; }

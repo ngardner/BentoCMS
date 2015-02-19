@@ -1,5 +1,9 @@
 <?php
 
+
+require 'config/enviroment.php';
+$_GET = $params;
+
 /**
  *  Image Generator
  *
@@ -12,6 +16,8 @@
  *  September 15th, 2010
  *
  *  Updated: April 1st, 2013 - added multiformat support, and transparent PNGs
+ *  Updated: October 22nd, 2013 - added circle effect.
+ *                              - This really needs to be rewritten as an object. Its getting to complicated for procedural
  *
  *  ----------------
  *
@@ -35,8 +41,8 @@
  */
 
 // SETTINGS
-ini_set('display_errors',0);
-$cacheDir = $_SERVER['DOCUMENT_ROOT'].'/cache/';
+ini_set('display_errors',1);
+$cacheDir = DIR.'cache/';
 $imageQuality = 95; // 0 (bad quality, small file) to 100 (high quality, big file) - applies to JPEGS only
 
 ##############################################################################
@@ -77,10 +83,13 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
     
   }
   
+  // overwrite for circle effect
+  if($effect == 'circle') { $imageType = 'png'; }
+  
   $cacheFile = md5($orignalImage.$maxWidth.$maxHeight.$effect).'.'.$imageType;
   
   // if width and height arent set, effect gets set to bestfit
-  if(empty($maxWidth) || empty($maxHeight)) {
+  if((empty($maxWidth) || empty($maxHeight)) && $effect != 'circle') {
     
     $effect = 'bestfit';
     
@@ -101,7 +110,41 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
         $width = $maxWidth;
         $height = $maxHeight;
       break;
-      
+      case "circle":
+        if($maxWidth && $maxHeight) {
+          
+          if($orignalWidth > $orignalHeight) {
+            
+            $width = $maxHeight;
+            $height = $maxHeight;
+            
+          } else {
+            
+            $height = $maxWidth;
+            $width = $maxWidth;
+            
+          }
+          
+        } else {
+          
+          if($maxWidth) {
+            
+            $width = $maxWidth;
+            $height = $maxWidth;
+            
+          } else if($maxHeight) {
+            
+            $height = $maxHeight;
+            $width = $maxHeight;
+            
+          } else {
+            
+            outputError($maxWidth,$maxHeight,'Width or Height is required');
+            
+          }
+          
+        }
+      break;
       case "bestfit":
       default:
         
@@ -133,10 +176,14 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
             $width = $maxWidth;
             $height = $maxWidth * ($orignalHeight / $orignalWidth);
             
-          } else {
+          } else if($maxHeight) {
             
             $height = $maxHeight;
             $width = $maxHeight * ($orignalWidth / $orignalHeight);
+            
+          } else {
+            
+            outputError($maxWidth,$maxHeight,'Width or Height is required');
             
           }
           
@@ -149,11 +196,12 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
     $newRatio = $width/$height;
     
     // load in the orignal image
-    switch($imageType) {
+    switch($orignalType) {
       
-      case 'gif': $loadedImage = imagecreatefromgif($orignalImage); break;
-      case 'jpg': $loadedImage = imagecreatefromjpeg($orignalImage); break;
-      case 'png': $loadedImage = imagecreatefrompng($orignalImage); break;
+      case 1: $loadedImage = imagecreatefromgif($orignalImage); break;
+      case 2: $loadedImage = imagecreatefromjpeg($orignalImage); break;
+      case 3: $loadedImage = imagecreatefrompng($orignalImage); break;
+      default: $loadedImage = imagecreatefromjpeg($orignalImage); break;
       
     }
     
@@ -197,6 +245,47 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
           
         break;
         
+        case 'circle':
+          
+          if($width>$height) { $circleSize = $height; } else { $circleSize = $width; }
+          
+          
+          if($newRatio > $orignalRatio) {
+            
+            $start_x = 0;
+            $crop_width = $orignalWidth;
+            $crop_height = $crop_width * ($height/$width);
+            $start_y = ($orignalHeight - $crop_height)/2;
+            
+          } else {
+            
+            $start_y = 0;
+            $crop_height = $orignalHeight;
+            $crop_width = $crop_height * $newRatio;
+            $start_x = ($orignalWidth - $crop_width)/2;
+            
+          }
+          
+          $newImage = imagecreatetruecolor($circleSize,$circleSize);
+          imagecopyresampled($newImage,$loadedImage,0,0,$start_x,$start_y,$width,$height,$crop_width,$crop_height);
+          
+          $mask = imagecreatetruecolor($circleSize, $circleSize);
+          
+          $maskTransparent = imagecolorallocate($mask, 255, 0, 255);
+          imagecolortransparent($mask, $maskTransparent);
+          imagefilledellipse($mask, $circleSize / 2, $circleSize / 2, $circleSize, $circleSize, $maskTransparent);
+          
+          imagecopymerge($newImage, $mask, 0, 0, 0, 0, $circleSize, $circleSize, 100);
+
+          $dstTransparent = imagecolorallocate($newImage, 255, 0, 255);
+          imagefill($newImage, 0, 0, $dstTransparent);
+          imagefill($newImage, $circleSize - 1, 0, $dstTransparent);
+          imagefill($newImage, 0, $circleSize - 1, $dstTransparent);
+          imagefill($newImage, $circleSize - 1, $circleSize - 1, $dstTransparent);
+          imagecolortransparent($newImage, $dstTransparent);
+          
+        break;
+        
       }
       
       // save to cache folder
@@ -204,8 +293,10 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
         case 'gif': imagegif($newImage,$cacheDir.$cacheFile); break;
         case 'jpg': imagejpeg($newImage,$cacheDir.$cacheFile,$imageQuality); break;
         case 'png':
-          imagealphablending($newImage, false); // force transparency
-          imagesavealpha($newImage, true); // force transparency
+          if($effect != 'circle') {
+            imagealphablending($newImage, false); // force transparency
+            imagesavealpha($newImage, true); // force transparency
+          }
           imagepng($newImage,$cacheDir.$cacheFile,9);
         break;
       }
@@ -229,7 +320,7 @@ if(file_exists($orignalImage) && is_file($orignalImage)) {
   
 } else {
   
-  outputError($maxWidth,$maxHeight,'No Image Available');
+  outputError($maxWidth,$maxHeight,'No Image Available ('.$orignalImage.')');
   
 }
 
@@ -275,13 +366,13 @@ function outputImage($fileName) {
   
   switch($orignalType) {
     
-    case 'gif';
+    case 1;
       header('Content-type: image/gif');
     break;
-    case 'jpg';
+    case 2;
       header('Content-type: image/jpeg');
     break;
-    case 'png';
+    case 3;
       header('Content-type: image/png');
     break;
     default:
@@ -290,7 +381,7 @@ function outputImage($fileName) {
     
   }
   
-  header('Content-Disposition: attachment; filename='.$fileName);
+  header('Content-Disposition: inline; filename='.$fileName);
   echo file_get_contents($fileName);
   exit();
   

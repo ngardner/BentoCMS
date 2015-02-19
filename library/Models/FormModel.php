@@ -201,7 +201,6 @@ class FormModel extends Model {
 		SELECT
 			fs.`id`,
 			fs.`cDate`,
-			f.`includeBasics`,
 			f.`name` as 'form_name',
 			f.`id` as 'form_id'
 		FROM

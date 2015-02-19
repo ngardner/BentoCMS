@@ -37,7 +37,7 @@ class Validator {
 			
 		} else {
 			
-			$this->setError('Invalid'.$field);
+			$this->setError('Invalid '.$field);
 			return false;
 			
 		}

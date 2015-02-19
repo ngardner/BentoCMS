@@ -144,8 +144,22 @@ class EmailSender extends Model {
 		$this->view->assign('sidebar_left', $this->view->fetch('fromstring:'.$template['left_sidebar']));
 		$this->view->assign('sidebar_right', $this->view->fetch('fromstring:'.$template['right_sidebar']));
 		
-		$objEmailer->setBody($this->view->fetch('fromstring:'.$layoutInfo['code']), true);
-		$objEmailer->sendMail();
+		// send email
+		$mail = new PHPMailer;
+		$mail->SetFrom($this->emailFrom,"'".PRODUCT_NAME."'",true);
+		$mail->AddReplyTo($this->emailFrom);
+		$mail->AddAddress($userInfo['email'],$userInfo['fName'].' '.$userInfo['lName']);
+		$mail->AddBCC($objSettings->getEntry('admin','admin-email'));
+		$mail->IsHTML(true);
+		$mail->Subject = PRODUCT_NAME. ' - New User Registration';
+		$mail->Body = $this->view->fetch('fromstring:'.$layoutInfo['code']);
+		$mailSent = $mail->Send();
+                
+		if(!$mailSent) {
+			die('Mailer Error: ' . $mail->ErrorInfo);
+		} else {
+			return true;
+		}
 		
 		return true;
 		

@@ -64,6 +64,13 @@ class FriendlyurlModel extends Model {
 		
 	}
 	
+	function saveShortUrl($controller,$action,$params) {
+		
+		$shortUrl = '/'.microtime(true);
+		return $this->saveUrl($shortUrl,$controller,$action,$params);
+		
+	}
+	
 	function entryExist($url,$controller,$action,$params) {
 		
 		$sql = "

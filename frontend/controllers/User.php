@@ -47,6 +47,7 @@ class User extends Controller {
 				} else {
 					
 					$loginError = $this->objAuthentication->loginFailReason;
+					$params['errorMsg'] = $loginError;
 					
 				}
 				
@@ -117,7 +118,8 @@ class User extends Controller {
 		$layoutInfo = $objLayout->loadLayout();
 		$template = $objTemplate->loadTemplateFromKeyname('user-register');
 		
-		$this->view->assign('urlrequest',$returnUrl);
+		$this->view->assign('pageTitle','Login or Register');
+		$this->view->assign('returnurl',$returnUrl);
 		$this->view->assign('errorMsg',$errorMsg);
 		$this->view->assign('content',$this->view->fetch('fromstring:'.$template['content']));
 		$this->view->assign('sidebar_left',$this->view->fetch('fromstring:'.$template['left_sidebar']));
@@ -188,7 +190,7 @@ class User extends Controller {
 		$objValidator->validateNotEmpty($saveData['country'],'country');
 		$objValidator->validateNotEmpty($saveData['zip'],'zip');
 		
-		if(!empty($data['password'])) {
+		if(!empty($saveData['password'])) {
 			
 			$objValidator->validatePassword($saveData['password']);
 			@$objValidator->passwordsMatch($saveData['password'],$data['password2']);
@@ -203,10 +205,15 @@ class User extends Controller {
 			
 			$objUser = new UserModel;
 			$user_id = $objUser->saveUser($saveData);
+			if(!$user_id) { $this->errorMsg = $objUser->errorMsg; }
 			
 		}
 		
-		return $user_id;
+		if($user_id) {
+			return $user_id;
+		} else {
+			return false;
+		}
 		
 	}
 	
@@ -220,18 +227,7 @@ class User extends Controller {
 		$objTemplate = new TemplatesModel;
 		
 		$layoutInfo = $objLayout->loadLayout();
-		
-		//$template = $objTemplate->loadTemplateFromKeyname('user-forgotpassword');
-		$template = array(
-			'left_sidebad'=>'',
-			'right_sidebar'=>'',
-			'content'=>'
-				<form method="post" action="/user/forgotpassword">
-				<input type="hidden" name="resetpassword" value="1"/>
-				<label>Email:</label><input type="text" name="email">
-				</form>
-			'
-		);
+		$template = $objTemplate->loadTemplateFromKeyname('user-forgotpassword');
 		
 		if(!empty($params['resetpassword']) && !empty($params['email'])) {
 			
@@ -241,7 +237,7 @@ class User extends Controller {
 			if($userInfo) {
 				
 				$objEmailer = new EmailSender;
-				$objEmailer->sendUserForgotPassword($userInfo);
+				$smtpTalk = $objEmailer->sendPasswordReset($userInfo);
 				$message = 'Your password has been reset, please check your email for the new password.';
 				
 			} else {
@@ -252,6 +248,7 @@ class User extends Controller {
 			
 		}
 		
+		$this->view->assign('pageTitle','Forgot Password');
 		$this->view->assign('errorMsg',$errorMsg);
 		$this->view->assign('message',$message);
 		$this->view->assign('content',$this->view->fetch('fromstring:'.$template['content']));
@@ -284,6 +281,7 @@ class User extends Controller {
 		$layoutInfo = $objLayout->loadLayout();
 		$template = $objTemplate->loadTemplateFromKeyname('user-profile');
 		
+		$this->view->assign('pageTitle','My Profile');
 		$this->view->assign('message',$message);
 		$this->view->assign('userInfo',$userInfo);
 		$this->view->assign('content',$this->view->fetch('fromstring:'.$template['content']));

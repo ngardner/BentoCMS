@@ -57,6 +57,7 @@
 				
 			</div>
 			
+			{if $userInfo.type == 'admin'}
 			<div class="block_content tab_content" id="admin_permissions">
 				
 				<div class="white">
@@ -79,6 +80,7 @@
 				</div>
 				
 			</div>
+			{/if}
 			
 		</div><!-- tab-->
 

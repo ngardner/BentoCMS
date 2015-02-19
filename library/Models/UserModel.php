@@ -138,7 +138,7 @@ class UserModel extends Model {
 			
 			if($emailUsedBy != false && $emailUsedBy != $data['id']) {
 				
-				$this->errorMsg = 'Email already in use. '.$emailUsedBy.' - '.$data['id'];
+				$this->errorMsg = 'Email already in use.';
 				return false;
 				
 			}
@@ -337,7 +337,9 @@ class UserModel extends Model {
 		
 	}
 	
-	function findUser($searchString) {
+	function findUser($searchString,$start=0,$howMany=20) {
+		
+		$limitClause = intval($start).','.intval($howMany);
 		
 		$sql = "
 		SELECT

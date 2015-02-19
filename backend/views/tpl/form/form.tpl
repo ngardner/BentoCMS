@@ -54,14 +54,6 @@
 						<td class="top"><label>Success Message</label></td>
 						<td><textarea name="form_thanksmsg" class="textarea lrg">{$formInfo.thanksmsg}</textarea></td>
 					</tr>
-					<tr>
-						<td><label>Include Basics</label></td>
-						<td><input type="checkbox" name="form_includebasics" value="1" {if $formInfo}{if $formInfo.includeBasics}checked="checked"{/if}{else}checked="checked"{/if}/></td>
-					</tr>
-					<tr>
-						<td><label>Send to ExactTarget</label></td>
-						<td><input type="checkbox" name="form_exacttarget" value="1" {if $formInfo}{if $formInfo.exactTarget}checked="checked"{/if}{else}checked="checked"{/if}/></td>
-					</tr>
 				</table>
 
 			</div>

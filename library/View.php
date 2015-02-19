@@ -30,14 +30,14 @@ class View extends Smarty {
 		$this->assign('ProductTitle',PRODUCT_NAME);
 		
 		##skin dir
-		$this->assign('skin','/'.$this->location.'/views/');
-		$this->assign('bento','/bento/');
+		$this->assign('skin',URL.'/'.$this->location.'/views/');
+		$this->assign('bento',URL.'/bento/');
 		
-		##global url http/https
-		if(empty($_SERVER["HTTPS"])) {
-			$this->assign('httpUrl','http://'.URL.'/');
-		} else {
-			$this->assign('httpUrl','https://'.URL.'/');
+		##global url http
+		if(defined('INSTALLDIR') && INSTALLDIR != ''){
+			$this->assign('httpUrl',URL.'/');
+		}else{
+			$this->assign('httpUrl',URL);
 		}
 		
 		##site settings

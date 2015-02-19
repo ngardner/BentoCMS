@@ -18,6 +18,7 @@ class Settings {
 			
 			$c = __CLASS__;
 			self::$instance = new $c;
+			self::$instance->loadSettings();
 			
 		}
 		

@@ -22,7 +22,11 @@ class Error extends Controller {
 		
 		$objLayout = new LayoutModel;
 		$layoutInfo = $objLayout->loadLayout();
-		$this->view->assign('content','To view this page, you must have an account. Please login or register.');
+		
+		$this->view->assign('pageTitle','Permission Denied');
+		$this->view->assign('content',$this->view->fetch('fromstring:To view this page, you must have an account. <a href="/user/login">Login or Register</a> to continue.'));
+		$this->view->assign('sidebar_left',$this->view->fetch('fromstring:'));
+		$this->view->assign('sidebar_right',$this->view->fetch('fromstring:'));
 		$this->view->assign('layout',$this->view->fetch('fromstring:'.$layoutInfo['code']));
 		$this->finish();
 		

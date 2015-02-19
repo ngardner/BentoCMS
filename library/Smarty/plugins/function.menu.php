@@ -17,10 +17,6 @@ function smarty_function_menu($params, &$smarty) {
     $pageList = $objPages->getPages('published');
     global $__pageListTemp;
     
-    if(!empty($params['debug']) && $params['debug'] == 'true') {
-        echo '<pre>';print_r($pageList);echo '</pre>';
-    }
-    
     if(!empty($pageList)) {
         
         // limit to a parent
@@ -74,12 +70,9 @@ function smarty_function_menu($params, &$smarty) {
         
         reset($pageList);
         
-        if(!empty($params['debug']) && $params['debug'] == 'true') {
-            print_r($pageList);
-        }
-        
         // draw menu
-        $output = smarty_function_menu_makemenu($pageList,$output,$smarty);
+        $class = !empty($params['class'])?$params['class']:'';
+        $output = smarty_function_menu_makemenu($pageList,$output,$smarty,$class);
         
     }
     
@@ -87,49 +80,51 @@ function smarty_function_menu($params, &$smarty) {
     
 }
 
-function smarty_function_menu_makemenu($pageList,&$output='',&$smarty) {
+function smarty_function_menu_makemenu($pageList,&$output='',&$smarty,$class='') {
     
     $objUrl = new FriendlyurlModel;
     
-    $output .= '<ul>';
+    $output .= '<ul class="'.$class.'">';
     
     foreach($pageList as $page) {
         
-        if(!empty($page['title'])) {
+        $liclass = '';
+        
+        if(!empty($page['active'])) {
             
-            if(!empty($page['active'])) {
-                
-                $class = ' class="active"';
-                
-            } else {
-                
-                $class = '';
-                
+            $liclass = 'active';
+            
+        } else if(!empty($page['children'])) {
+            
+            foreach($page['children'] as $testpage) {
+                if(!empty($testpage['active'])) {
+                    $liclass = 'active-parent';
+                }
             }
-            
-            $output .= '<li'.$class.'>';
-            
-            if($page['type'] == 'page') {
-                
-                $url = $objUrl->findUrl('pages',$page['keyName']);
-                
-            } else {
-                
-                $url = $page['url'];
-                
-            }
-            
-            $output .= '<a href="'.$url.'" target="'.$page['windowaction'].'">'.$page['title'].'</a>';
-            
-            if(!empty($page['children'])) {
-                
-                smarty_function_menu_makemenu($page['children'],$output,$smarty);
-                
-            }
-            
-            $output .= '</li>';
             
         }
+        
+        $output .= '<li class="'.$liclass.'">';
+        
+        if($page['type'] == 'page') {
+            
+            $url = $objUrl->findUrl('pages',$page['keyName']);
+            
+        } else {
+            
+            $url = $page['url'];
+            
+        }
+        
+        $output .= '<a href="'.$url.'" target="'.$page['windowaction'].'">'.$page['title'].'</a>';
+        
+        if(!empty($page['children'])) {
+            
+            smarty_function_menu_makemenu($page['children'],$output,$smarty);
+            
+        }
+        
+        $output .= '</li>';
         
     }
     

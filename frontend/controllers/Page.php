@@ -41,7 +41,7 @@ class Page extends Controller {
 		
 		$pageInfo = $objPage->loadPage($page_id);
 		
-		if(!empty($pageInfo) && $pageInfo['status'] == 'published' && $pageInfo['type'] == 'page' || $previewPage == true) {
+		if(!empty($pageInfo) && ($pageInfo['status'] == 'published' || $pageInfo['status'] == 'hidden') && $pageInfo['type'] == 'page' || $previewPage == true) {
 			
 			// load additional page info
 			$sideBars = $objPage->getPageSidebars($page_id);
@@ -53,6 +53,7 @@ class Page extends Controller {
 			//assign template vars
 			$this->view->assign('pageTitle',$pageInfo['title']);
 			$this->view->assign('content',$this->view->fetch('fromstring:'.$pageInfo['content']));
+			$this->view->assign('root_page_identifier',$objPage->getPageRootKeyname($page_id));
 			
 			if(!empty($sideBars)) {
 				
@@ -66,7 +67,7 @@ class Page extends Controller {
 		} else {
 			
 			// page not found
-			$this->view->assign('layout','404 - '.print_r($params,true));
+			Dispatcher::error404('Page Not Found');
 			
 		}
 		

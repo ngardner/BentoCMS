@@ -64,6 +64,32 @@ class Model {
 		
 	}
 	
+	function loadAll($table,$whereClauseCustom='') {
+		
+		$table = $this->db->makeSafe($table);
+		
+		$whereClause = ($whereClauseCustom)?$whereClauseCustom:"1 = 1";
+		
+		$sql = "
+		SELECT
+			*
+		FROM
+			`".$table."`
+		WHERE
+			".$whereClause."
+		";
+		
+		return $this->db->getAll($sql);
+		
+		
+	}
+	
+	function delete($id,$table) {
+		
+		return $this->db->delete($table,$id);
+		
+	}
+	
 	function generateKeyName($name,$table,$current_page_id=false) {
 		
 		$keyName = trim(strtolower(preg_replace('/\W/','-',$name)));

@@ -5,7 +5,7 @@
 class Controller {
   
 	public $view;
-  public $layout;
+	public $layout;
 	
 	function __construct() {
 		
@@ -59,6 +59,97 @@ class Controller {
 			throw new Exception('No view to render');
 			
 		}
+		
+	}
+	
+	// converts the data to json and outputs
+	function JSONoutput($data) {
+		
+		$output = json_encode($data);
+		header('Content-type: application/json');
+		echo $output;
+		exit(0);
+		
+	}
+	
+	// converts the data to CSV and outputs
+	//function CSVoutput($data,$filename='csvexport') {
+	//	
+	//	$headers = array_keys($data[0]);
+	//	
+	//	header("Content-type: text/csv");
+	//	header("Content-Disposition: attachment; filename=".$filename.".csv");
+	//	header("Pragma: no-cache");
+	//	header("Expires: 0");
+	//	
+	//	foreach($headers as $header) {
+	//		
+	//		echo '"'.str_replace('"', '""', $header).'",';
+	//		
+	//	}
+	//	
+	//	echo "\r\n";
+	//	
+	//	foreach($data as $exportRecord) {
+	//		
+	//		foreach($exportRecord as $value) {
+	//			
+	//			echo '"'.str_replace('"', '""', $value).'",';
+	//			
+	//		}
+	//		
+	//		echo "\r\n";
+	//		
+	//	}
+	//	
+	//	exit(0);
+	//	
+	//}
+	
+	function CSVoutput($data,$filename='csvexport') {
+		
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=".$filename.".csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$headers = array();
+		$exportData = array();
+		
+		// find all possibe headers
+		foreach($data as $row) { $headers = array_merge($headers,array_keys($row)); }
+		$headers = array_unique($headers);
+		
+		// format export data to match headers
+		foreach($data as $row) {
+			foreach($headers as $aHeader) {
+				$exportRow[$aHeader] = !empty($row[$aHeader])?$row[$aHeader]:'';
+			}
+			$exportData[] = $exportRow;
+		}
+		
+		// export it
+		foreach($headers as $header) {
+			
+			echo '"'.str_replace('"', '""', $header).'",';
+			
+		}
+		
+		echo "\r\n";
+		
+		foreach($exportData as $exportRecord) {
+			
+			foreach($exportRecord as $value) {
+				
+				echo '"'.str_replace('"', '""', $value).'",';
+				
+			}
+			
+			echo "\r\n";
+			
+		}
+		
+		exit(0);
 		
 	}
 	

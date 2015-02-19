@@ -33,7 +33,7 @@
 				</p>
 				
 				<p>
-					<label>password</label><br/>
+					<label>password</label> <a href="{$httpUrl}user/forgotpassword">Forgot Password?</a><br/>
 					<input type="password" name="password" class="text" tabindex="2"/>
 				</p>
 				

@@ -132,7 +132,6 @@ class PagesModel extends Model {
 		
 		$resultsTemp = $this->db->getAll($sql);
 		
-		// the magic tree code
 		if(!empty($resultsTemp)) {
 			
 			foreach($resultsTemp as $result) {
@@ -241,5 +240,314 @@ class PagesModel extends Model {
 		return $this->db->getOne("SELECT `id` FROM `pages` WHERE `keyName` = '".$this->db->makeSafe($page_identifier)."'");
 		
 	}
+	
+	/**
+	 * Returns the keyName of the pages oldest (root) parent
+	 */
+	function getPageRootKeyname($page_id) {
+		
+		$page_id = intval($page_id);
+		
+		while(($parent_id = $this->db->getOne("SELECT `parent_id` FROM `pages` WHERE `id` = ".$page_id)) != 0) {
+			$page_id = $parent_id;
+		}
+		
+		$rootsKeyname = $this->db->getOne("SELECT `keyName` FROM `pages` WHERE `id` = ".$page_id);
+		
+		return $rootsKeyname;
+		
+	}
+
+	//begin homepage functions
+
+	function loadHomepage() {
+		
+		$homepageInfo = array();
+
+		// get first mini-profile slide
+		$mp_slide = "
+		SELECT
+			*
+		FROM
+			`homepage_info`
+		WHERE
+			`key` = 'mp_slide'
+		";
+		$homepageInfo['mp_slide'] = $this->db->getAll($mp_slide);
+
+		// get mini-profile welcome message
+		$mp_welcome = "
+		SELECT
+			*
+		FROM
+			`homepage_info`
+		WHERE
+			`key` = 'mp_welcome'
+		";
+		$homepageInfo['mp_welcome'] = $this->db->getAll($mp_welcome);
+		
+		// get other slides
+		$slides = "
+		SELECT
+			*
+		FROM
+			`homepage_slides`
+		ORDER BY
+			`displayOrder`
+		";
+		$homepageSlides = $this->db->getAll($slides);
+		
+		foreach($homepageSlides as $homepageSlide) {
+			$homepageInfo['slides'][] = $homepageSlide;
+		}
+		// get tagline
+		$tag = "
+		SELECT
+			`value`
+		FROM
+			`homepage_info`
+		WHERE
+			`key` = 'tag'
+		";
+		$homepageInfo['tagline'] = $this->db->getAll($tag);
+
+		// get icons
+		$icons = "
+		SELECT
+			*
+		FROM
+			`homepage_icons`
+		ORDER BY
+			`displayOrder`
+		";
+		$homepageIcons = $this->db->getAll($icons);
+		foreach($homepageIcons as $icon){
+			$homepageInfo['icons'][] = $icon;
+		}
+
+		// get features
+		$features = "
+		SELECT
+			*
+		FROM
+			`homepage_features`
+		ORDER BY
+			`displayOrder`
+		";
+		$homepageFeatures = $this->db->getAll($features);
+		foreach($homepageFeatures as $feature){
+			$homepageInfo['features'][] = $feature;
+		}
+			
+		return $homepageInfo;
+		
+	}
+	/**
+	 * This does not upload (see Files->upload) it saves the results to DB
+	 */
+	function saveHomepageSlide($slide) {
+		
+		return $this->save($slide,'homepage_slides');
+		
+	}
+
+	/**
+	 * This does not upload (see Files->upload) it saves the results to DB
+	 */
+	function updateSlides($slide) {
+		
+		return $this->save($slide,'homepage_slides');
+		
+	}
+	
+	/**
+	 * This does not upload (see Files->upload) it saves the results to DB
+	 */
+	function saveHomepageBlock($block) {
+		
+		return $this->save($block,'homepage_blocks');
+		
+	}
+
+	function saveHomeInfo($info) {
+		
+		return $this->save($info, 'homepage_info');
+		
+	}
+
+	/**
+	 * This does not upload (see Files->upload) it saves the results to DB
+	 */
+	function saveHomepageIcon($icons) {
+		
+		return $this->save($icons, 'homepage_icons');
+		
+	}
+
+	/**
+	 * This does not upload (see Files->upload) it saves the results to DB
+	 */
+	function saveHomepageFeature($features) {
+
+		return $this->save($features, 'homepage_features');
+		
+	}
+	
+	function saveHomepageBlockSortOrder($sortOrder) {
+		
+		foreach($sortOrder as $order=>$block_id) {
+			
+			$this->db->reset();
+			$this->db->assign('displayOrder',intval($order));
+			$this->db->update('homepage_blocks',"`id`=".intval($block_id));
+			
+		}
+		
+		return true;
+		
+	}
+	
+	function deleteHomepageBlock($id) {
+		
+		$id = intval($id);
+		
+		// remove from filesystem
+		$blockInfo = $this->load($id,'homepage_blocks');
+		
+		if($blockInfo) {
+			
+			@unlink(DIR.$blockInfo['image']);
+			
+			// remove from db
+			$this->db->delete('homepage_blocks',$id);
+			
+		}
+		
+		return true;
+		
+	}
+
+	function saveHomepageIconSortOrder($sortOrder){
+
+		foreach($sortOrder as $order=>$slide_id) {
+			
+			$this->db->reset();
+			$this->db->assign('displayOrder',intval($order));
+			$this->db->update('homepage_icons',"`id`=".intval($slide_id));
+			
+		}
+		
+		return true;
+
+	}
+
+	function saveHomepageFeatureSortOrder($sortOrder){
+
+		foreach($sortOrder as $order=>$slide_id) {
+			
+			$this->db->reset();
+			$this->db->assign('displayOrder',intval($order));
+			$this->db->update('homepage_features',"`id`=".intval($slide_id));
+			
+		}
+		
+		return true;
+
+	}
+	
+	function saveHomepageSlideSortOrder($sortOrder) {
+		
+		foreach($sortOrder as $order=>$slide_id) {
+			
+			$this->db->reset();
+			$this->db->assign('displayOrder',intval($order));
+			$this->db->update('homepage_slides',"`id`=".intval($slide_id));
+			
+		}
+		
+		return true;
+		
+	}
+	
+	function deleteHomepageSlide($id) {
+		
+		$id = intval($id);
+		
+		// remove from filesystem
+		$slideInfo = $this->load($id,'homepage_slides');
+		
+		if($slideInfo) {
+			
+			@unlink(DIR.$slideInfo['image']);
+			
+			// remove from db
+			$this->db->delete('homepage_slides',$id);
+			
+		}
+		
+		return true;
+		
+	}
+
+	function deleteMiniprofileSlide($id) {
+		
+		$id = intval($id);
+		
+		// remove from filesystem
+		$slideInfo = $this->load($id,'homepage_info');
+		
+		if($slideInfo) {
+			
+			@unlink(DIR.$slideInfo['value']);
+			
+			// remove from db
+			$this->db->delete('homepage_info',$id);
+			
+		}
+		
+		return true;
+		
+	}
+
+	function deleteHomepageIcon($id) {
+		
+		$id = intval($id);
+		
+		// remove from filesystem
+		$iconInfo = $this->load($id,'homepage_icons');
+		
+		if($iconInfo) {
+			
+			@unlink(DIR.$iconInfo['image']);
+			
+			// remove from db
+			$this->db->delete('homepage_icons',$id);
+			
+		}
+		
+		return true;
+		
+	}
+
+	function deleteHomepageFeature($id) {
+		
+		$id = intval($id);
+		
+		// remove from filesystem
+		$featureInfo = $this->load($id,'homepage_features');
+		
+		if($featureInfo) {
+			
+			@unlink(DIR.$featureInfo['image']);
+			
+			// remove from db
+			$this->db->delete('homepage_features',$id);
+			
+		}
+		
+		return true;
+		
+	}
+
 	
 }

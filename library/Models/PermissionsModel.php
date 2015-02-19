@@ -114,11 +114,11 @@ class PermissionsModel extends Model {
 			
 			$currentPermissions = $this->getAllPermissions();
 			
-			if(!empty($currentPermissions)) {
+			foreach($possiblePermissions as $id=>$possiblePermission) {
 				
-				foreach($possiblePermissions as $id=>$possiblePermission) {
-					
-					$alreadyExists = false;
+				$alreadyExists = false;
+				
+				if(!empty($currentPermissions)) {
 					
 					foreach($currentPermissions as $permission) {
 						
@@ -131,11 +131,11 @@ class PermissionsModel extends Model {
 						
 					}
 					
-					if(!$alreadyExists) {
-						
-						$newPermissions[] = $possiblePermission;
-						
-					}
+				}
+				
+				if(!$alreadyExists) {
+					
+					$newPermissions[] = $possiblePermission;
 					
 				}
 				
